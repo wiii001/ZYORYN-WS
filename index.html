@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Kalkulator Workshop ZYORYN</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #000000
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #000000;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border: 1px solid #ccc;
+    }
+    th {
+      background-color: #a3a6f6;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #ecf0f1;
+    }
+    tr:hover {
+      background-color: #d6e;
+    }
+    .btn {
+      background-color: #27ae60;
+      color: white;
+      padding: 10px;
+      border: none;
+      margin-top: 20px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+    }
+    .btn:hover {
+      background-color: #219150;
+    }
+    .total {
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 10px;
+      text-align: right;
+      color: #2c3e50;
+    }
+    .footer {
+      margin-top: 30px;
+      text-align: center;
+      font-style: italic;
+      color: #7f8c8d;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Calculator Workshop ZYORYN</h1>
+
+<form id="calcForm">
+  <table>
+    <thead>
+      <tr>
+        <th>Layanan</th>
+        <th>Harga ($)</th>
+        <th>Jumlah</th>
+        <th>Pilih</th>
+      </tr>
+    </thead>
+    <tbody id="serviceTable"></tbody>
+  </table>
+
+  <button type="button" class="btn" onclick="hitungTotal()">Hitung Total</button>
+</form>
+
+<div class="total" id="totalHarga">Total: $0</div>
+
+<div class="footer">by: Ujank (Wii)</div>
+
+<script>
+  const services = [
+    ["Engine fix", 2000],
+    ["Body fix", 3000],
+    ["Engine upgrade & Body upgrade", 26000],
+    ["Spray car", 1000],
+    ["Paint job", 5000],
+    ["Velg car", 1000],
+    ["Hood car", 2000],
+    ["Spoiler car", 3000],
+    ["Vent car", 2000],
+    ["Lights car", 2000],
+    ["Exhaust", 2000],
+    ["Front bumper", 3000],
+    ["Rear bumper", 3000],
+    ["Roofs car", 3000],
+    ["Side car", 3000],
+    ["Bulbars", 2000],
+    ["Stereo", 2000],
+    ["Hydraulic", 3000],
+    ["Nitro 1", 5000],
+    ["Nitro 2", 7000],
+    ["Nitro 3", 10000],
+    ["Neon", 3000],
+    ["ToolKit (max 3 biji)", 3000],
+    ["Full Modif", 35000]
+  ];
+
+  const fullModifIncludes = [
+    "Exhaust",
+    "Engine fix",
+    "Body fix",
+    "Spray car",
+    "Velg car",
+    "Hood car",
+    "Spoiler car",
+    "Front bumper",
+    "Rear bumper",
+    "Roofs car",
+    "Hydraulic",
+    "Engine upgrade & Body upgrade"
+  ];
+
+  const tbody = document.getElementById("serviceTable");
+
+  services.forEach((item, i) => {
+    const row = document.createElement("tr");
+    const maxQty = item[0].includes("ToolKit") ? 3 : 99;
+
+    row.innerHTML = `
+      <td>${item[0]}</td>
+      <td>${item[1]}</td>
+      <td><input type="number" name="qty${i}" value="1" min="1" max="${maxQty}" id="qty${i}"></td>
+      <td><input type="checkbox" name="select${i}" id="select${i}" onchange="cekFullModif(${i})"></td>
+    `;
+
+    tbody.appendChild(row);
+  });
+
+  function hitungTotal() {
+    let total = 0;
+    services.forEach((item, i) => {
+      const selected = document.getElementById(`select${i}`).checked;
+      const qty = parseInt(document.getElementById(`qty${i}`).value);
+      if (selected) {
+        total += item[1] * qty;
+      }
+    });
+    document.getElementById("totalHarga").innerText = "Total: $" + total.toLocaleString();
+  }
+
+  function cekFullModif(index) {
+    const isFullModif = services[index][0] === "Full Modif";
+    if (!isFullModif) return;
+
+    const fullModifChecked = document.getElementById(`select${index}`).checked;
+
+    services.forEach((item, i) => {
+      if (fullModifIncludes.includes(item[0]) && item[0] !== "Full Modif") {
+        document.getElementById(`select${i}`).disabled = fullModifChecked;
+        document.getElementById(`qty${i}`).disabled = fullModifChecked;
+        if (fullModifChecked) {
+          document.getElementById(`select${i}`).checked = false;
+        }
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
